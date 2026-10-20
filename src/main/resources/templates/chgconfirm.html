@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <title>更新後確認画面</title>
+</head>
+    <body class="bg-light">
+    <div class="container py-4" style="max-width: 900px;">
+        <h1 class="h3 mb-4">更新後確認画面</h1>
+
+    <!--一覧表示-->
+    <div class="card shadow-sm mb-3">
+        <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead class="table-light">
+            <tr>
+                <th>タイトル</th>
+                <th class="text-center">状態</th>
+                <th>作成日</th>
+                <th>更新日</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="task : ${tasks}">
+                <td class="text-center" th:text="${task.title}"></td>
+                <td class="text-center">
+                <span class="badge"
+                        th:classappend="${task.completed} ? 'text-bg-success' : 'text-bg-warning'"
+                        th:text="${task.completed} ? '完了' : '未完'">
+                </span>
+                </td>
+                <td class="text-nowrap" th:text="${#temporals.format(task.created_at, 'yyyy年M月d日 HH:mm')}"></td>
+                <td class="text-nowrap" th:text="${task.updated_at != null} ? ${#temporals.format(task.updated_at, 'yyyy年M月d日 HH:mm')} : '更新なし'"></td>
+            </tr>
+            </tbody>
+        </table>
+        </div>
+    </div>
+
+        <!--トップページに遷移-->
+        <form th:action="@{/task}" method="get">
+            <button class="btn btn-secondary" type="submit">トップページに戻る</button>
+        </form>
+        
+    </div>
+    </body>
+</html>

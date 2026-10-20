@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.mapper.TaskMapper">
+    <!--SQL文を書くところ-->
+
+    <update id="createTable">
+        CREATE TABLE tasks (
+        id INT PRIMARY KEY AUTO_INCREMENT,
+        title VARCHAR(100),
+        completed BOOLEAN,
+        created_at TIMESTAMP
+        updated_at TIMESTAMP NULL DEFAULT NULL
+        )
+    </update>
+
+    <insert id="insert" parameterType="com.example.demo.entity.tasks" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tasks(title, completed)
+        VALUES (#{title}, #{completed})
+    </insert>
+
+
+    <select id="findPage" resultType="com.example.demo.entity.tasks">
+        SELECT id, title, completed, created_at, updated_at
+        FROM tasks
+        ORDER BY id
+        LIMIT #{limit_value} OFFSET #{offset_value}
+    </select>
+
+    <select id="count" resultType="int">
+        SELECT COUNT(*)
+        FROM tasks;
+    </select>
+
+    <select id="findAll" resultType="com.example.demo.entity.tasks">
+        SELECT id, title, completed, created_at, updated_at 
+        FROM tasks
+    </select>
+
+    <update id="update" parameterType="com.example.demo.entity.tasks">
+        UPDATE tasks 
+        SET title = #{title}, completed = #{completed} , updated_at = NOW()
+        WHERE id = #{id}
+        AND (title != #{title} OR completed != #{completed})
+    </update>
+
+    <delete id="delete" parameterType="com.example.demo.entity.tasks">
+        DELETE FROM tasks 
+        WHERE id = #{id}
+    </delete>
+    
+    <select id="findByTitle" resultType="com.example.demo.entity.tasks">
+        SELECT id, title, completed, created_at, updated_at
+        FROM tasks
+        WHERE title LIKE CONCAT('%', #{keyword}, '%')
+    </select>
+
+    
+</mapper>
+
+

@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+  <title>タスク一覧</title>
+</head>
+<body class="bg-light">
+<div class="container py-4" style="max-width: 900px;">
+  <h1 class="h3 mb-4">タスク管理</h1>
+
+  <!-- 検索 -->
+  <form class="row g-2 mb-3" th:action="@{/pointSearch}" th:object="${keyword}" method="post">
+    <div class="col" th:if="${#fields.hasErrors('keyword')}" th:errors="*{keyword}"></div>
+    <div class="col">
+      <input type="text" class="form-control" th:field="*{keyword}" placeholder="タイトルで検索">
+    </div>
+    <div class="col-auto">
+      <button type="submit" class="btn btn-outline-primary">検索</button>
+    </div>
+  </form>
+
+  <!-- 一覧 -->
+  <div class="card shadow-sm mb-3">
+    <div class="table-responsive">
+      <table class="table table-hover align-middle mb-0">
+        <thead class="table-light">
+          <tr>
+            <th>タイトル</th>
+            <th class="text-center">状態</th>
+            <th>作成日</th>
+            <th>更新日</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr th:each="task : ${tasks}">
+            <td class="text-center" th:text="${task.title}"></td>
+            <td class="text-center">
+              <span class="badge"
+                    th:classappend="${task.completed} ? 'text-bg-success' : 'text-bg-warning'"
+                    th:text="${task.completed} ? '完了' : '未完'">
+              </span>
+            </td>
+            <td class="text-nowrap" th:text="${#temporals.format(task.created_at, 'yyyy年M月d日 HH:mm')}"></td>
+            <td class="text-nowrap" th:text="${task.updated_at != null} ? ${#temporals.format(task.updated_at, 'yyyy年M月d日 HH:mm')} : '更新なし'"></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ページネーション -->
+  <nav class="d-flex justify-content-center mb-4">
+    <div class="pagination mb-0" th:if="${totalPages != null}">
+      <a class="page-link" th:if="${page > 1}" th:href="@{/task(page=${page - 1})}">前へ</a>
+      <span class="page-link" th:if="${page <= 1}">前へ</span>
+
+      <span th:text="${page} + '/' + ${totalPages}"></span>
+
+      <span class="page-link" th:if="${page >= totalPages}">次へ</span>
+      <a class="page-link" th:if="${page < totalPages}" th:href="@{/task(page=${page + 1})}">次へ</a>
+    </div>
+    
+
+  </nav>
+
+  <!-- 追加フォーム -->
+  <div class="card shadow-sm mb-3">
+    <div class="card-body">
+      <form class="row g-2" th:action="@{/add}" th:object="${todoForm}" method="post">
+        <div class="col-12 col-md" th:if="${#fields.hasErrors('title')}" th:errors="*{title}"></div>
+        <div class="col-12 col-md">
+          <input type="text" class="form-control" th:field="*{title}" placeholder="タスク名">
+        </div>
+        <div class="col-6 col-md-auto">
+          <select class="form-select" name="completed" required>
+            <option value="0">未完</option>
+            <option value="1">完了</option>
+          </select>
+        </div>
+        <div class="col-6 col-md-auto">
+          <button type="submit" class="btn btn-primary w-100">追加する</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <a th:href="@{@{/edit}}" class="btn btn-secondary">編集</a>
+</div>
+
+</body>
+</html>
